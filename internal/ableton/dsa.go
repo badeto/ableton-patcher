@@ -26,46 +26,6 @@ type DSAPublicKeyASN1 struct {
 	SubjectPublicKey asn1.BitString
 }
 
-func NewDSA(P, Q, G, Y, X string) (*dsa.PrivateKey, error) {
-	Pint, err := toBigInt(P)
-	if err != nil {
-		return nil, err
-	}
-
-	Qint, err := toBigInt(Q)
-	if err != nil {
-		return nil, err
-	}
-	Gint, err := toBigInt(G)
-	if err != nil {
-		return nil, err
-	}
-
-	Yint, err := toBigInt(Y)
-	if err != nil {
-		return nil, err
-	}
-
-	Xint, err := toBigInt(X)
-	if err != nil {
-		return nil, err
-	}
-
-	key := &dsa.PrivateKey{
-		PublicKey: dsa.PublicKey{
-			Parameters: dsa.Parameters{
-				P: Pint,
-				Q: Qint,
-				G: Gint,
-			},
-			Y: Yint,
-		},
-		X: Xint,
-	}
-
-	return key, nil
-}
-
 func signDSA(key dsa.PrivateKey, message string) (string, error) {
 	if key.X.BitLen() > 1024 {
 		return "", fmt.Errorf("key size must be 1024 bits")
@@ -88,16 +48,6 @@ func signDSA(key dsa.PrivateKey, message string) (string, error) {
 	sBytes := fmt.Sprintf("%040X", s)
 
 	return rBytes + sBytes, nil
-}
-
-func toBigInt(s string) (*big.Int, error) {
-	i := new(big.Int)
-	_, err := fmt.Sscan(s, i)
-	if err != nil {
-		return nil, fmt.Errorf("convert to big int %s: %w", s, err)
-	} else {
-		return i, nil
-	}
 }
 
 type DSAPrivateKeyASN1 struct {
