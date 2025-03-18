@@ -23,18 +23,22 @@ func main() {
 		LogFatalError("load config", err)
 	}
 
+	if configFilePath == "" {
+		configFilePath, err = ExecutableDirFilePath(configFilename)
+		if err != nil {
+			LogFatalError("join config filename", err)
+		}
+	}
+
 	key, err := ableton.HexToPrivateDSA(c.PrivateKey)
 	if err != nil {
 		LogFatalError("load private key", err)
 	}
 
 	app := &application{
-		config: c,
-		key:    key,
-	}
-
-	if configFilePath == "" {
-		app.configPath = configFilename
+		config:     c,
+		configPath: configFilePath,
+		key:        key,
 	}
 
 	app.mainMenu()

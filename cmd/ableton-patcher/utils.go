@@ -11,7 +11,7 @@ import (
 func LogFatalError(caller string, err error) {
 	message := fmt.Sprintf("%s: %s", caller, err.Error())
 	fmt.Println(message)
-	Pause()
+	Shutdown()
 }
 
 func ExecutableDirFilePath(fileName string) (string, error) {
@@ -70,8 +70,24 @@ func GetLine() string {
 	return input
 }
 
+func ClearScreen() {
+	fmt.Print("\033[H\033[2J")
+}
+
 func Pause() {
+	fmt.Println("\n\nPress enter to continue")
+	fmt.Scanln()
+	ClearScreen()
+}
+
+func Shutdown() {
 	fmt.Println("\nPress enter to exit")
 	fmt.Scanln()
 	os.Exit(0)
+}
+
+func ReplaceAndCount(s, old, new string) (string, int) {
+	count := strings.Count(s, old)
+	replaced := strings.ReplaceAll(s, old, new)
+	return replaced, count
 }
